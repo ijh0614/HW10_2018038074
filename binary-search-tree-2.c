@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Binary Search Tree #2
  *
  * Data Structures
@@ -29,12 +29,12 @@ void push(Node* aNode);//위에 쌓는 것
 
 /* for queue */
 #define MAX_QUEUE_SIZE		20
-Node* queue[MAX_QUEUE_SIZE];
+Node* queue[MAX_QUEUE_SIZE];//큐 배열 선언
 int front = -1;
-int rear = -1;
+int rear = -1;//가르키고 있는 값이 없는걸로 초기화
 
-Node* deQueue();
-void enQueue(Node* aNode);
+Node* deQueue();//front가 가르키는 값을 반환하고 1 증가시킴
+void enQueue(Node* aNode);//rear를 1 증가시키고 해당 위치에 값 저장
 
 
 int initializeBST(Node** h);
@@ -175,8 +175,34 @@ void iterativeInorder(Node* node)
 /**
  * textbook: p 225
  */
-void levelOrder(Node* ptr)
+void levelOrder(Node* ptr)//루트노드의 주소를 전달받는다
 {
+	front = 0;
+	rear = 0;// 큐 위치 할당
+
+	if(ptr == NULL){// 루트노드가 없으면, 즉 공백트리이면
+		return ;
+	}
+
+	enQueue(ptr);//먼저 루트 노드를 넣어주어서 front와 rear를 다르게함
+	
+	while(1){
+		ptr = deQueue();
+		
+		if(ptr != NULL){
+			printf(" [%d] ", ptr->key);
+
+			if(ptr->left != NULL){
+				enQueue(ptr->left);//왼쪽 자식노드가 있으면 큐에 저장
+			}
+			if(ptr->right != NULL){
+				enQueue(ptr->right);//오른쪽 자식노드가 있으면 큐에 저장
+			}
+		}
+		else{//ptr이 NULL이면
+			break; //반복문, 함수 탈출
+		}
+	}
 }
 
 
@@ -276,10 +302,17 @@ void push(Node* aNode)//stack 배열에 값 저장(노드의 주소)
 
 Node* deQueue()
 {
+	//front가 가르치는 위치와 rear가 가르치는 위치가 같은 경우. 즉 큐가 비어있는 경우
+	if(front == rear){
+		return NULL;//널 반환
+	}
+
+	return queue[front++];
 }
 
 void enQueue(Node* aNode)
 {
+	queue[rear++] = aNode;
 }
 
 void printStack(){
