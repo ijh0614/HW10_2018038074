@@ -253,7 +253,7 @@ int insert(Node* head, int key)//노드 삽입 함수
 int deleteNode(Node* head, int key)//헤드 노드의 주소 인자로 받음
 {
 	Node* node = head->left;//root노드
-    Node* parent;
+    Node* parent = head;
     Node* temp;
     Node* temp_parent;
 
@@ -305,8 +305,10 @@ int deleteNode(Node* head, int key)//헤드 노드의 주소 인자로 받음
 			temp_parent=temp;
 			temp = temp->left;//가장 작은 값
 		}
+
 		if(temp==node->right){//지우려는 노드의 바로 오른쪽 노드가 리프 노드인 경우
-			if(parent->key > node->key){//부모의 왼쪽 가지에 자식이 있는 경우
+		//루트노드 삭제하기 포함
+			if(parent->key > node->key || parent->key == -9999){//부모의 왼쪽 가지에 자식이 있는 경우
 				parent->left = temp;
 			}
 			else {
@@ -316,7 +318,7 @@ int deleteNode(Node* head, int key)//헤드 노드의 주소 인자로 받음
 		}
 
 		else{//가장 작은 노드가 지우려는 노드의 바로 오른쪽 노드가 아닌 경우
-			if(parent->key > node->key){//부모의 왼쪽 가지에 자식이 있는 경우
+			if(parent->key > node->key || parent->key == -9999){//부모의 왼쪽 가지에 자식이 있는 경우
 				parent->left = temp;
 			}
 			else {
@@ -324,13 +326,14 @@ int deleteNode(Node* head, int key)//헤드 노드의 주소 인자로 받음
 			}
 			temp_parent->left = NULL;//원래 temp를 가르키고 있던 branch 삭제
 			temp->left = node->left;
+			temp->right = node->right;
 		}
-		temp->right = node->right;
 		free(node);
     }
 
 	else{//자식 노드가 하나인 경우
-		if(parent->key > node->key){//부모의 왼쪽 가지에 자식이 있는 경우
+
+		if(parent->key > node->key || parent->key == -9999){//부모의 왼쪽 가지에 자식이 있는 경우
 			if(node->left != NULL){//지우려는 노드의 자식 노드가 왼쪽에 있는 경우
 				parent->left = node->left;
 			}
