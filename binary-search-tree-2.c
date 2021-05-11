@@ -62,7 +62,7 @@ int main()
 
 	do{
 		printf("\n\n");
-		printf("---------[2018038074]------------------------[임종훈]-----------\n");
+		printf("-------[2018038074]----------------------[ImJongHoon]-----------\n");
 		printf("                   Binary Search Tree #2                        \n");
 		printf("----------------------------------------------------------------\n");
 		printf(" Initialize BST       = z                                       \n");
@@ -250,8 +250,106 @@ int insert(Node* head, int key)//노드 삽입 함수
 }
 
 
-int deleteNode(Node* head, int key)
+int deleteNode(Node* head, int key)//헤드 노드의 주소 인자로 받음
 {
+	Node* node = head->left;//root노드
+    Node* parent;
+    Node* temp;
+    Node* temp_parent;
+
+	if(node == NULL){//루트노드가 없는 경우
+		printf("There is no root node");
+		return 0;
+	}
+
+    while(node != NULL && node->key != key){//둘 중 하나만 참이어도 탈출. key값을 찾거나, 끝까지 돌았는데도 못 찾거나
+        if(node->key > key){//현재 읽고있는 노드의 key값이 찾는 key값보다 크면
+            parent = node;
+            node = node->left;//왼쪽 자식노드 탐색
+        }
+        else{//그렇지 않으면
+            parent = node;
+            node = node->right;//오른쪽 자식노드 탑색
+        }
+    }
+
+    //node에 NULL이어서 탈출한 경우 경우 값이 없음
+    if(node == NULL){
+        printf("There is no key in tree\n");
+        return 0;
+    }
+
+
+    //key를 찾은 경우 일단 해당 노드의 주소가 반환됨.
+    if(node->left == NULL && node->right == NULL){//key가 들어있는 노드에 양쪽이 다 NULL이면
+    //자식이 없으므로 leaf노드다.
+        if(node == head->left){//루트노드가 leaf노드라면
+            head->left = NULL;//헤드노드에 가르키는 값에 NULL넣고
+            free(node);//해제
+            return 0;
+        }
+        if(parent->key > node->key){//부모 노드가 지우려는 노드보다 크면
+            parent->left = NULL;//자식 노드가 왼쪽에 있음
+        }
+        else{//아니면
+            parent->right = NULL;//자식 노드가 오른쪽에 있음
+        }
+        free(node);
+    }
+
+    else if(node->left != NULL && node->right != NULL){//자식 노드가 두개 인경우
+        //오른쪽 서브트리에서 가장 작은 값으로 대체
+		temp = node->right;//오른쪽에서 가장 작은 노드 찾아야함
+
+		while(temp->left != NULL){
+			temp_parent=temp;
+			temp = temp->left;//가장 작은 값
+		}
+		if(temp==node->right){//지우려는 노드의 바로 오른쪽 노드가 리프 노드인 경우
+			if(parent->key > node->key){//부모의 왼쪽 가지에 자식이 있는 경우
+				parent->left = temp;
+			}
+			else {
+				parent->right = temp;
+			}
+			temp->left = node->left;//지워질 노드 왼쪽 브랜치 값을 받음
+		}
+
+		else{//가장 작은 노드가 지우려는 노드의 바로 오른쪽 노드가 아닌 경우
+			if(parent->key > node->key){//부모의 왼쪽 가지에 자식이 있는 경우
+				parent->left = temp;
+			}
+			else {
+				parent->right = temp;
+			}
+			temp_parent->left = NULL;//원래 temp를 가르키고 있던 branch 삭제
+			temp->left = node->left;
+		}
+		temp->right = node->right;
+		free(node);
+    }
+
+	else{//자식 노드가 하나인 경우
+		if(parent->key > node->key){//부모의 왼쪽 가지에 자식이 있는 경우
+			if(node->left != NULL){//지우려는 노드의 자식 노드가 왼쪽에 있는 경우
+				parent->left = node->left;
+			}
+			else{//자식 노드가 오른쪽에 있는 경우
+				parent->left = node->right;
+			}
+		}
+		else{//부모의 오른쪽 가지에 자식이 있는 경우
+			if(node->left != NULL){//지우려는 노드의 자식 노드가 왼쪽에 있는 경우
+				parent->right = node->left;
+			}
+			else{//자식 노드가 오른쪽에 있는 경우
+				parent->right = node->right;
+			}
+		}
+        free(node);
+	}
+
+    return 0;
 }
 
 
